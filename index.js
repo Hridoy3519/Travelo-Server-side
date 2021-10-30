@@ -71,19 +71,34 @@ async function run() {
     //Post API to receive a users orders
     app.post("/orders/user", async (req, res) => {
       const userEmail = req.body.email;
-      const query = { email: {$in : [userEmail]} };
+      const query = { email: { $in: [userEmail] } };
       const orders = await orderCollections.find(query).toArray();
       res.json(orders);
     });
 
     //Delete API
-    app.delete('/orders/:id', async(req,res) => {
-      
-      const query = {_id : ObjectId(req.params.id)};
+    app.delete("/orders/:id", async (req, res) => {
+      const query = { _id: ObjectId(req.params.id) };
 
       const result = await orderCollections.deleteOne(query);
       res.json(result);
-    })
+    });
+
+    //Update Api
+    app.put("/orders/:id", async (req, res) => {
+      const filter = { _id: ObjectId(req.params.id) };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: {
+          status: "Approved",
+        },
+      };
+
+      const result = await orderCollections.updateOne(filter, updateDoc, options);
+
+      res.json(result);
+    });
   } finally {
     //await client.close();
   }
