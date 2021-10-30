@@ -75,6 +75,15 @@ async function run() {
       const orders = await orderCollections.find(query).toArray();
       res.json(orders);
     });
+
+    //Delete API
+    app.delete('/orders/:id', async(req,res) => {
+      
+      const query = {_id : ObjectId(req.params.id)};
+
+      const result = await orderCollections.deleteOne(query);
+      res.json(result);
+    })
   } finally {
     //await client.close();
   }
